@@ -37,24 +37,7 @@ class MainActivity : AppCompatActivity() {
         tv = findViewById(R.id.tvList)
 
         view.setOnClickListener {
-          //  view()
-            db.collection("recipes")
-                .get()
-                .addOnFailureListener { exception ->
-                    Log.w("TAG", "Error getting documents.", exception)
-                }
-                .addOnSuccessListener { result ->
-                    var details = "\n"
-                    for (document in result) {
-                        Log.d("TAG", "${document.id} => ${document.data}")
-                        document.data.map { (key, value)
-                            ->
-                            details = details +"${document.id}:" + "$key = $value \n\n"
-                        }
-                        details = details +"____________________________________________\n\n"
-                    }
-                    tv.text =details
-                }
+            view()
         }
         savebtn.setOnClickListener {
             save()
@@ -84,10 +67,41 @@ class MainActivity : AppCompatActivity() {
             Instruction.setText("")
         }
     }
-//    fun view(){
-//        val recipes: String = myViewModel.getRecipes()
-//        println(recipes)
-//        println("fsdf")
-//        tv.text = "$recipes"
-//    }
+    fun view(){
+        myViewModel.getRecipes().observe(this,{
+            recipes ->
+            for (i in recipes){
+                tv.text = i +"\n"
+            }
+        //tv.text = recipes.toString()
+        })
+    }
 }
+
+
+//retrive in main activity
+//            db.collection("recipes")
+//                .get()
+//                .addOnFailureListener { exception ->
+//                    Log.w("TAG", "Error getting documents.", exception)
+//                }
+//                .addOnSuccessListener { result ->
+//                    var details = "\n"
+//                    for (document in result) {
+//                        Log.d("TAG", "${document.id} => ${document.data}")
+//                        document.data.map { (key, value)
+//                            ->
+//                            details = details +"${document.id}:" + "$key = $value \n\n"
+//                        }
+//                        details = details +"____________________________________________\n\n"
+//                    }
+//                    tv.text =details
+//                }
+
+//fun view(){
+//     val recipes = myViewModel.getRecipes()
+//     println(recipes)
+//     println("fsdf")
+// tv.text = recipes.toString()
+//
+//}

@@ -1,10 +1,12 @@
 package com.example.recipeappfirebase
 
 import android.app.Application
+import android.provider.ContactsContract
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -37,25 +39,28 @@ class MyViewModel (applicationContext : Application): AndroidViewModel(applicati
                 }
     }
 
-//    fun getRecipes():String{
-//        var send = ""
-//        db.collection("recipes")
-//                .get()
-//                .addOnFailureListener { exception ->
-//                    Log.w("TAG", "Error getting documents.", exception)
-//                }
-//                .addOnSuccessListener { result ->
-//                    var details = "\n"
-//                    for (document in result) {
-//                        Log.d("TAG", "${document.id} => ${document.data}")
-//                        document.data.map { (key, value)
-//                            ->
-//                            details = details +"${document.id}:" + "$key = $value \n\n"
-//                        }
-//                    }
-//                    send = details
-//                    println(send)
-//                }
-//        return send
-//    }
+    fun getRecipes():LiveData<List<String>>{
+        var send = ArrayList<String>()
+        var recipes : MutableLiveData<List<String>> = MutableLiveData()
+        var details = "\n"
+        db.collection("recipes")
+                .get()
+                .addOnFailureListener { exception ->
+                    Log.w("TAG", "Error getting documents.", exception)
+                }
+                .addOnSuccessListener { result ->
+                    for (document in result) {
+                        Log.d("TAG", "${document.id} => ${document.data}")
+                        document.data.map { (key, value)
+                            ->
+                            details = details +"${document.id}:" + "$key = $value \n\n"
+                        }
+                        details = details +"____________________________________________\n\n"
+                    }
+                    send.add(details)
+                    recipes.postValue(send)
+                }
+        println("data"+send)
+        return recipes
+    }
 }
